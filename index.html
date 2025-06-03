@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>StreetHouse</title>
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <style>
+    @font-face {
+      font-family: 'Pilowlava';
+      src: url('./tipografias/Pilowlava-Regular.otf');
+    }
+
+    @font-face {
+      font-family: 'NotoSans';
+      src: url('./tipografias/NotoSans-VariableFont_wdth,wght.ttf');
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'NotoSans', sans-serif;
+      color: white;
+      position: relative;
+      min-height: 100vh;
+      overflow-x: hidden;
+      background-color: black;
+    }
+
+    /* Slideshow de fondo */
+    .slideshow {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -2;
+      overflow: hidden;
+    }
+
+    .slideshow img {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0;
+      transition: opacity 1s ease-in-out;
+    }
+
+    .slideshow img.active {
+      opacity: 0.7; /* Más luz */
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-color: rgba(0, 0, 0, 0.3); /* Menos oscuro */
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    header {
+      text-align: center;
+      padding: 1rem 0 0.5rem;
+    }
+
+    header img {
+      width: 110px;
+      margin-bottom: 0.2rem;
+    }
+
+    header h1 {
+      font-family: 'Pilowlava', cursive;
+      font-size: 3rem;
+      margin: 0;
+    }
+
+    nav {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      padding: 1rem 0;
+    }
+
+    .tab {
+      background-color: #000000;
+      padding: 0.7rem 1.5rem;
+      cursor: pointer;
+      border-radius: 6px;
+      font-weight: 700;
+      color: white;
+      text-transform: uppercase;
+      transition: background-color 0.3s ease;
+    }
+
+    .tab:hover {
+      background-color: #222222;
+    }
+
+    section.contenido {
+      max-width: 1000px;
+      margin: 2rem auto;
+      padding: 1rem;
+      font-size: 1.1rem;
+      opacity: 0;
+      transform: translateY(60px);
+      transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+      display: none;
+    }
+
+    section.contenido.active {
+      display: block;
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .quienes-container {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 40px;
+      flex-wrap: wrap;
+    }
+
+    .foto {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+    }
+
+    .foto img {
+      width: 100%;
+      max-width: 300px;
+      border-radius: 20px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.6);
+      transition: transform 0.3s ease;
+    }
+
+    .foto img:hover {
+      transform: scale(1.05);
+    }
+
+    .texto-quienes {
+      flex: 1;
+      max-width: 500px;
+      font-size: 1.1rem;
+      text-align: center;
+    }
+
+    #Filosofía\ Corporativa {
+      text-align: center;
+    }
+
+    /* Quitar viñetas en Filosofía Corporativa */
+    #Filosofía\ Corporativa ul {
+      list-style: none;
+      padding-left: 0;
+      margin: 0 0 1rem 0;
+    }
+
+    #Filosofía\ Corporativa ul li {
+      margin-bottom: 0.5rem;
+    }
+
+    footer {
+      text-align: center;
+      padding: 2rem 0 3rem;
+    }
+
+    .social .siguenos {
+      font-weight: bold;
+      font-size: 18px;
+      margin-bottom: 10px;
+      color: white;
+    }
+
+    .social a {
+      margin: 0 10px;
+      font-size: 2rem;
+      color: white;
+      transition: color 0.3s ease;
+    }
+
+    .social a:hover {
+      color: #000000;
+    }
+
+    /* Galería ajustada */
+
+    /* Contenedor principal vacío para control */
+    #galeria {
+      max-width: 1000px;
+      margin: 2rem auto;
+    }
+
+    .galeria-arriba {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .galeria-arriba .galeria-item img {
+      width: 280px;
+      border-radius: 20px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.6);
+      cursor: pointer;
+      transition: transform 0.3s ease;
+    }
+
+    .galeria-arriba .galeria-item img:hover {
+      transform: scale(1.05);
+    }
+
+    .galeria-arriba .galeria-item p {
+      margin-top: 0.5rem;
+      font-size: 0.9rem;
+      color: white;
+    }
+
+    .galeria-abajo {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .galeria-abajo .galeria-item img {
+      width: 280px;
+      border-radius: 20px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.6);
+      cursor: pointer;
+      transition: transform 0.3s ease;
+    }
+
+    .galeria-abajo .galeria-item img:hover {
+      transform: scale(1.05);
+    }
+
+    .galeria-abajo .galeria-item p {
+      margin-top: 0.5rem;
+      font-size: 0.9rem;
+      color: white;
+    }
+
+    /* Imagen ampliada */
+    .imagen-ampliada {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw;
+      height: 100vh;
+      background-color: rgba(0,0,0,0.9);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+
+    .imagen-ampliada img {
+      max-width: 90%;
+      max-height: 90%;
+      border-radius: 15px;
+    }
+
+    .imagen-ampliada:hover {
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+<!-- Slideshow de fondo -->
+<div class="slideshow">
+  <img src="img/petri lado.png" class="active" />
+  <img src="img/petri en patineta.jpg" />
+  <img src="img/playera.png" />
+  <img src="img/todos en grande.png" />
+  <img src="img/nava.jpg" />
+  <img src="img/navaplayera.jpg" />
+</div>
+
+<header>
+  <img src="./img/logo-removebg-preview.png" alt="Logo StreetHouse" />
+  <h1>StreetHouse</h1>
+</header>
+
+<nav>
+  <div class="tab" onclick="mostrar('¿Quienes somos?')">¿Quiénes somos?</div>
+  <div class="tab" onclick="mostrar('Filosofía Corporativa')">Filosofía Corporativa</div>
+  <div class="tab" onclick="mostrar('galeria')">Galería</div>
+  <div class="tab" onclick="mostrar('revista')">Revista</div>
+  <div class="tab" onclick="window.open('https://www.figma.com/proto/a59rPDqy8hCYDkL5Cb4Vg1/Untitled?node-id=224-39&starting-point-node-id=1%3A1225', '_blank')">Aplicación</div>
+</nav>
+<section id="¿Quienes somos?" class="contenido">
+  <div class="quienes-container">
+    <div class="foto">
+      <img src="img/nava.jpg" alt="Imagen izquierda">
+    </div>
+    <div class="texto-quienes">
+      <p>En STREET HOUSE la ropa no solo es una forma de vestir, es una forma de expresión. 
+      Somos una tienda en línea hecha de jóvenes, para jóvenes donde cada playera refleja tu identidad, personalidad y estilo. Ofrecemos diseños personalizables a un precio accesible, porque sabemos que tu voz también se viste.
+      StreetHouse nace de la pasión por la cultura urbana y el arte callejero, fusionando moda, identidad y actitud.</p>
+    </div>
+  </div>
+
+  <div style="display: flex; justify-content: center; margin-top: 30px;">
+    <video controls width="100%" style="max-width: 600px; border-radius: 15px; box-shadow: 10px 10px rgba(0,0,0,0.5);">
+      <source src="img/video.mp4" contols style="margin-top:30px;">pe="video/mp4">
+      Tu navegador no soporta la reproducción de video.
+    </video>
+  </div>
+</section>
+
+<section id="Filosofía Corporativa" class="contenido">
+  <h2><strong>Misión</strong></h2>
+  <p>Ofrecer ropa urbana de estilo streetwear que refleje autenticidad, creatividad y actitud, permitiendo a cada cliente expresar su identidad a través de prendas personalizadas y diseños únicos, todo desde la comodidad de una tienda en línea.</p>
+
+  <h2><strong>Visión</strong></h2>
+  <p>Ser la tienda en línea líder en streetwear personalizado en el mundo hispano, reconocida por su innovación, calidad y conexión con la cultura urbana.</p>
+
+  <h2><strong>Valores</strong></h2>
+  <ul>
+    <li><strong>Autenticidad:</strong> Ser fiel a la esencia de la moda urbana.</li>
+    <li><strong>Innovación:</strong> Mantenerse a la vanguardia y adaptarse al público.</li>
+    <li><strong>Inclusión:</strong> Promover la diversidad en cada colección.</li>
+    <li><strong>Creatividad:</strong> Fomentar la expresión artística y original.</li>
+  </ul>
+
+  <h2>Objetivo</h2>
+  <p>Posicionar a Street House como una marca de referencia en moda urbana personalizada.</p>
+</section>
+
+<section id="galeria" class="contenido">
+  <div class="galeria-arriba">
+    <div class="galeria-item" onclick="ampliarImagen('img/petri lado.png')">
+      <img src="img/petri lado.png" alt="">
+    </div>
+  </div>
+  <div class="galeria-abajo">
+    <div class="galeria-item" onclick="ampliarImagen('img/petri en patineta.jpg')">
+      <img src="img/petri en patineta.jpg" alt="">
+    </div>
+    <div class="galeria-item" onclick="ampliarImagen('img/playera.png')">
+      <img src="img/playera.png" alt="">
+    </div>
+    <div class="galeria-item" onclick="ampliarImagen('img/todos en grande.png')">
+      <img src="img/todos en grande.png" alt="">
+    </div>
+    <div class="galeria-item" onclick="ampliarImagen('img/navaplayera.jpg')">
+      <img src="img/navaplayera.jpg" alt="">
+    </div>
+  </div>
+</section>
+
+<section id="revista" class="contenido">
+  <div style="text-align: center;">
+    <h2>Revista StreetHouse</h2>
+    <p>Descubre las últimas tendencias urbanas, entrevistas exclusivas y novedades del mundo del streetwear.</p>
+    <a href="https://example.com/revista" target="_blank" style="color: white; text-decoration: underline;">Visitar Revista</a>
+  </div>
+</section>
+
+<footer>
+  <div class="social">
+    <p class="siguenos">Síguenos</p>
+    <a href="https://www.instagram.com/_street_house/streethouse" target="_blank"><i class="fa-brands fa-instagram"></i></a>
+    <a href="https://www.tiktok.com/@streethouse_mx?_t=ZS-8wsp0b5X33Y&_r=1/@streethouse" target="_blank"><i class="fa-brands fa-tiktok"></i></a>
+    <a href="https://www.youtube.com/@StreetHouse_mx/@streethouse" target="_blank"><i class="fa-brands fa-youtube"></i></a>
+  </div>
+</footer>
+
+<script>
+  // Slideshow de fondo automático
+  const slides = document.querySelectorAll('.slideshow img');
+  let currentSlide = 0;
+  setInterval(() => {
+    slides[currentSlide].classList.remove('active');
+    currentSlide = (currentSlide + 1) % slides.length;
+    slides[currentSlide].classList.add('active');
+  }, 8000);
+
+  // Mostrar/ocultar secciones con toggle: 
+  function mostrar(id) {
+    const contenidos = document.querySelectorAll('.contenido');
+    const seccion = document.getElementById(id);
+
+    if (seccion.style.display === 'block' && seccion.classList.contains('active')) {
+      contenidos.forEach(c => {
+        c.classList.remove('active');
+        c.style.display = 'none';
+      });
+    } else {
+      contenidos.forEach(c => {
+        if (c.id === id) {
+          c.style.display = 'block';
+          setTimeout(() => {
+            c.classList.add('active');
+          }, 50);
+        } else {
+          c.classList.remove('active');
+          setTimeout(() => {
+            c.style.display = 'none';
+          }, 500);
+        }
+      });
+    }
+  }
+
+  // Función para ampliar imágenes en galería
+  function ampliarImagen(src) {
+    const overlay = document.createElement('div');
+    overlay.className = 'imagen-ampliada';
+    const img = document.createElement('img');
+    img.src = src;
+    overlay.appendChild(img);
+
+    overlay.onclick = () => {
+      overlay.remove();
+    };
+
+    document.body.appendChild(overlay);
+  }
+</script>
+
+</body>
+</html>
